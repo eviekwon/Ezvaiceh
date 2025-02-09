@@ -1,0 +1,104 @@
+h4.hyesoo {margin-top: 20px;;
+  margin-left: 40px; font-family: Avenir Next; font-weight:Regular; font-size:17px; color: yellow; background-color: pink; padding:50px; margin-right: 300px; }
+
+
+p{font-family: Avenir Next; font-size: 16px; margin-left: 40px; margin-right:350px;}
+
+.header {
+  padding: 8px;
+  text-align: center;
+  background-color:rgba(224, 225, 152, 0.836);
+  color:rgb(29, 48, 72);
+  font-size: 20px;
+  font-family: Hannotate TC ;
+}
+span.class2 {color: lightcoral; font-family: Avenir Next; font-weight: bold; font-size: 13pt;}
+span.class3 {color: rgb(199, 65, 65); font-family: Avenir Next; font-weight: bold; font-size: 14pt;}
+span.class4 {color: rgb(230, 132, 192); font-family: Avenir Next; font-weight: bold; font-size: 14pt;}
+
+.cena1 {
+  float: left;
+  margin-left: 50px;
+}
+
+.myimage {
+  margin: 5px;
+  float: right;
+  width: 40px; height: 40px;
+}
+
+.row
+{
+    display: flex;
+    margin-left:100px;
+}
+
+.column1 {
+    flex: 35%;
+    padding: 5px;
+    margin-left: 00px;
+
+}
+.column2 {
+    flex: 35%;
+    padding: 5px;
+    margin-left: 800px;
+
+}
+
+.button {
+
+}
+
+*{box-sizing: border-box;}
+
+    .img-container {
+        margin: 35px;
+        float:left;
+        width: 10%;
+        height: 20%;
+        padding: 0px;
+    }
+
+    .content {
+        width: 75%;
+    }
+
+
+    .container {
+        position: relative;
+        width: 50%;
+        max-width: 300px;
+
+    }
+
+    .image {
+        margin-left:35px;
+        display: block;
+        width: 70%;
+        height: auto;
+    }
+
+    .overlay {
+        margin-left:35px;
+        position: absolute;
+        bottom: 0;
+        background: rgb(0, 0, 0);
+        background: rgba(0, 0, 0, 0.5);
+        color: #f1f1f1;
+        width: 110%;
+        transition: .5s ease;
+        opacity:0;
+        color: white;
+        font-size: 15px;
+        font-family: Avenir Next;
+        padding: 13px;
+        text-align: center;
+    }
+
+    .container:hover .overlay {
+        opacity: 0.8;
+    }
+
+
+
