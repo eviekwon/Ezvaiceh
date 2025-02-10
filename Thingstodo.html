@@ -53,7 +53,6 @@ button:hover {
       <button onclick="addTask()">Add</button></div>
 
 
-
     <form id="bucketList">
       <div><input type="checkbox" id="list1" name="list-1" value="Aquarium">
         <label for="list1">Aquarium</label></div>
@@ -61,11 +60,11 @@ button:hover {
         <label for="list2">Blue Mountains Night Walk</label></div>
       <div> <input type="checkbox" id="list3" name="list-3" value="Carpool Karaoke">
         <label for="list3">Carpool Karaoke</label></div>
-      <div><input type="checkbox" id="list4" name="list-4" value="Bouldering" checked disabled>
+      <div><input type="checkbox" id="list4" name="list-4" value="Bouldering">
         <label for="list4">Bouldering</label></div>
       <div><input type="checkbox" id="list5" name="list-5" value="Board Games">
         <label for="list5">Board Games</label></div>
-      <div><input type="checkbox" id="list6" name="list-6" value="Lego Date Night" checked disabled>
+      <div><input type="checkbox" id="list6" name="list-6" value="Lego Date Night" >
         <label for="list6">Lego Date Night</label></div>
       <div><input type="checkbox" id="list7" name="list-7" value="Top Golf">
         <label for="list7">Top Golf</label></div>
@@ -75,7 +74,7 @@ button:hover {
         <label for="list9">Dancing in the Rain</label></div>
       <div><input type="checkbox" id="list10" name="list-10" value="Watch Fireworks (Maybe NYE)">
         <label for="list10">Watch Fireworks (Maybe NYE)</label></div>
-      <div><input type="checkbox" id="list11" name="list-11" value="Stroll along a River" checked disabled>
+      <div><input type="checkbox" id="list11" name="list-11" value="Stroll along a River" >
         <label for="list11">Stroll along a River</label></div>
       <div><input type="checkbox" id="list12" name="list-12" value="Bike Riding">
         <label for="list12">Bike Riding</label></div>
@@ -89,7 +88,7 @@ button:hover {
         <label for="list16">Drive to the Beach at Night</label></div>
       <div><input type="checkbox" id="list17" name="list-17" value="Baking">
         <label for="list17">Baking</label></div>
-      <div><input type="checkbox" id="list18" name="list-18" value="Karaoke" checked disabled>
+      <div><input type="checkbox" id="list18" name="list-18" value="Karaoke">
         <label for="list18">Karaoke</label></div>
       <div><input type="checkbox" id="list19" name="list-19" value="Ice skating">
         <label for="list19">Ice skating</label></div>
@@ -144,20 +143,32 @@ button:hover {
   <script>
     document.addEventListener("DOMContentLoaded", function () {
         const bucketList = document.getElementById("bucketList");
+
+        // ✅ Load checked & disabled tasks from localStorage
+        const checkedTasks = JSON.parse(localStorage.getItem("checkedTasks")) || [];
+        const disabledTasks = JSON.parse(localStorage.getItem("disabledTasks")) || [];
+
         let tasks = JSON.parse(localStorage.getItem("bucketList")) || [];
 
-        // ✅ Load saved tasks from localStorage
         tasks.forEach(task => {
-            addTaskToDOM(task.text, task.checked);
+            addTaskToDOM(task.text, task.checked, task.disabled);
         });
 
-        // ✅ Listen for changes and save them
+        // ✅ Restore checked & disabled states
+        checkedTasks.forEach(id => {
+            const checkbox = document.getElementById(id);
+            if (checkbox) checkbox.checked = true;
+        });
+
+        disabledTasks.forEach(id => {
+            const checkbox = document.getElementById(id);
+            if (checkbox) checkbox.disabled = true;
+        });
+
+        // ✅ Listen for checkbox changes
         bucketList.addEventListener("change", function (e) {
             if (e.target.type === "checkbox") {
-                saveTasks();
-                if (e.target.checked) {
-                    e.target.disabled = true;  // Disable checked items
-                }
+                updateTaskStates();
             }
         });
     });
@@ -167,34 +178,65 @@ button:hover {
         const taskText = taskInput.value.trim();
         if (!taskText) return;
 
-        addTaskToDOM(taskText, false);
-        saveTasks(); // Save to localStorage
+        if (isTaskDuplicate(taskText)) {
+            alert("This task already exists in the list!");
+            return;
+        }
+
+        addTaskToDOM(taskText);
+        saveNewTask(taskText, false, false);
         taskInput.value = "";
+
     }
 
-    function addTaskToDOM(text, checked) {
+    function isTaskDuplicate(text) {
+        return [...document.querySelectorAll("#bucketList label")].some(label => label.innerText.toLowerCase() === text.toLowerCase());
+    }
+
+    function saveNewTask(text, checked, disabled) {
+        let tasks = JSON.parse(localStorage.getItem("bucketList")) || [];
+        tasks.push({ text: text, checked: checked, disabled: disabled });
+        localStorage.setItem("bucketList", JSON.stringify(tasks));
+    }
+
+    function addTaskToDOM(text) {
         const bucketList = document.getElementById("bucketList");
         const newId = "list" + (document.querySelectorAll('input[type="checkbox"]').length + 1);
 
-        // ✅ Add new task using `insertAdjacentHTML()`
         bucketList.insertAdjacentHTML("beforeend", `
             <div>
-                <input type="checkbox" id="${newId}" ${checked ? "checked disabled" : ""}>
+                <input type="checkbox" id="${newId}">
                 <label for="${newId}">${text}</label>
             </div>
         `);
     }
 
-    function saveTasks() {
-        const tasks = [];
+    function updateTaskStates() {
+        let checkedTasks = [];
+        let disabledTasks = [];
+        let tasks = [];
+
+        document.querySelectorAll("#bucketList input[type='checkbox']").forEach(checkbox => {
+            if (checkbox.checked) {
+                checkedTasks.push(checkbox.id);
+                checkbox.disabled = true;
+                disabledTasks.push(checkbox.id);
+            }
+        });
         document.querySelectorAll("#bucketList div").forEach(div => {
             const checkbox = div.querySelector("input[type='checkbox']");
             const label = div.querySelector("label");
-            tasks.push({ text: label.innerText, checked: checkbox.checked });
-        });
-        localStorage.setItem("bucketList", JSON.stringify(tasks));
-    }
+            tasks.push({ text: label.innerText, checked: checkbox.checked, disabled: checkbox.disabled });
 
+            if (checkbox.checked) {
+                checkbox.disabled = true;  // Disable checked tasks
+            }
+        });
+
+        localStorage.setItem("bucketList", JSON.stringify(tasks));
+        localStorage.setItem("checkedTasks", JSON.stringify(checkedTasks));
+        localStorage.setItem("disabledTasks", JSON.stringify(disabledTasks));
+    }
   </script>
 <a style="display:scroll;position:fixed;bottom:10px;right:10px;" href="#" title="Top">Go to Top</a>
 </body>
