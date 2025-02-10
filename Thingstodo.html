@@ -142,6 +142,9 @@ button:hover {
     document.addEventListener("DOMContentLoaded", function () {
         const bucketList = document.getElementById("bucketList");
 
+        // 기존 리스트 초기화
+        bucketList.innerHTML = "";
+
         // ✅ Load checked & disabled tasks from localStorage
         const checkedTasks = JSON.parse(localStorage.getItem("checkedTasks")) || [];
         const disabledTasks = JSON.parse(localStorage.getItem("disabledTasks")) || [];
@@ -184,10 +187,10 @@ button:hover {
         addTaskToDOM(taskText);
         saveNewTask(taskText, false, false);
         taskInput.value = "";
-
     }
 
     function isTaskDuplicate(text) {
+        // 기존 리스트에서 동일한 항목이 있는지 체크
         return [...document.querySelectorAll("#bucketList label")].some(label => label.innerText.toLowerCase() === text.toLowerCase());
     }
 
@@ -235,7 +238,8 @@ button:hover {
         localStorage.setItem("checkedTasks", JSON.stringify(checkedTasks));
         localStorage.setItem("disabledTasks", JSON.stringify(disabledTasks));
     }
-  </script>
+</script>
+
 <a style="display:scroll;position:fixed;bottom:10px;right:10px;" href="#" title="Top">Go to Top</a>
 </body>
 
